@@ -1,0 +1,4 @@
+	- setBaseInfo(string[] memory baseURI, uint256[] memory supply, bool isEnable)
+	• ["https://crypto_champion.mypinata.cloud/ipfs/QmaVjFVfb9R2M5oEvEebHvzWTuBnYa9jhDTT8GNWmoAxaT/","https://crypto_champion.mypinata.cloud/ipfs/QmYuQzV3N3x8QUaVWKj7t2n8KZmqYGb3J9nLUS5AAKLmDB/","https://crypto_champion.mypinata.cloud/ipfs/QmRgJGn2GUvxuhr5GknKzjACetwWwfMFVezPK5rX9RyC76/","https://crypto_champion.mypinata.cloud/ipfs/QmUdQaYCZMF4gFDgU6n5oS6myEWsVqDguweU4Utj8iBi5J/","https://crypto_champion.mypinata.cloud/ipfs/QmPauJDLH1LkY9XS8GhskoFUsp5HquEZVnmKuJfB4ah9Ru/"]
+	• [20,20,20,20,22]
+	• true
