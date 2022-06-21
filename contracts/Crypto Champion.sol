@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract CryptoChampion is ERC721URIStorage, Ownable {
     using Strings for uint256;
@@ -17,6 +18,7 @@ contract CryptoChampion is ERC721URIStorage, Ownable {
 
     uint256 public currentID = 0;
     mapping (uint256 => Item) public Items;
+    mapping (uint256 => string) public tokenIds;
     uint256 public PUBLIC_PRICE = 0.001 ether; // 1000000000000000
     uint256 public Item_Count = 0;
     bool public ENABLE_REVEAL = false;
@@ -34,6 +36,12 @@ contract CryptoChampion is ERC721URIStorage, Ownable {
 
     function setUnrevealURI(string memory unrevealURI) external onlyOwner {
         UNREVEAL_URI = unrevealURI;
+    }
+
+    function setTokenURI(uint256 _tokenId, string memory tokenUri) external onlyOwner {
+        require(_exists(_tokenId), "Token does not exist");
+        tokenIds[_tokenId] = tokenUri;
+        _setTokenURI(_tokenId, tokenUri);
     }
 
     function setBaseInfo(string[] memory baseURI, uint256[] memory supply, bool isEnable) external onlyOwner {
@@ -69,6 +77,7 @@ contract CryptoChampion is ERC721URIStorage, Ownable {
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_exists(tokenId), "Token does not exist");
         if (ENABLE_REVEAL){
+            if (bytes(tokenIds[tokenId]).length != 0)return tokenIds[tokenId];
             for (uint256 k = 0; k < Item_Count; k++) {
                 if (tokenId < Items[k].order_cnt){
                     uint256 del = k == 0 ? 0 : Items[k - 1].order_cnt;
@@ -97,5 +106,10 @@ contract CryptoChampion is ERC721URIStorage, Ownable {
             else Items[currentID].order_id++;
             if (!_exists(tokenId)) _safeMint(toAddress, tokenId);
         }
+    }
+
+    function withdrawToken(address toAddress, uint256 amount, address tokenAddress) external onlyOwner returns(bool isTransferred) {
+        IERC20 token = IERC20(tokenAddress);
+		isTransferred = token.transferFrom(msg.sender, toAddress, amount);
     }
 }
