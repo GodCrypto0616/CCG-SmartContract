@@ -1004,7 +1004,7 @@ interface IUniswapV2Router02 is IUniswapV2Router01 {
     ) external;
 }
 
-contract CryptoChampionGems is Context, IERC20, Ownable {
+contract CryptoChampionMushroom is Context, IERC20, Ownable {
     using SafeMath for uint256;
     using Address for address;
 
@@ -1033,8 +1033,8 @@ contract CryptoChampionGems is Context, IERC20, Ownable {
     address private _donationAddress =
         0x000000000000000000000000000000000000dEaD;
 
-    string private _name = "Crypto Champion Gems";
-    string private _symbol = "CCG";
+    string private _name = "Crypto Champion Mushroom";
+    string private _symbol = "CCM";
     uint8 private _decimals = 9;
 
     struct BuyFee {
@@ -1105,7 +1105,7 @@ contract CryptoChampionGems is Context, IERC20, Ownable {
         sellFee.donation = 0;
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(
-            0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D
+            0x10ED43C718714eb63d5aA57B78B54704E256024E
         );
         // Create a uniswap pair for this new token
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
@@ -1316,7 +1316,7 @@ contract CryptoChampionGems is Context, IERC20, Ownable {
 
     function addBotToBlacklist(address account) external onlyOwner {
         require(
-            account != 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D,
+            account != 0x10ED43C718714eb63d5aA57B78B54704E256024E,
             "We cannot blacklist UniSwap router"
         );
         require(!_isBlackListedBot[account], "Account is already blacklisted");
