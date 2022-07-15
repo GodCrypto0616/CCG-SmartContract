@@ -1021,7 +1021,7 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     mapping(address => bool) private _isExcludedFromLimit;
     address[] private _blackListedBots;
 
-    uint256 private constant MAX = ~uint256(0);
+    uint256 private constant MAX = ~uint256(0); //2**256 - 1
     uint256 private _tTotal = 10_000_000 * 10**9;
     uint256 private _rTotal = (MAX - (MAX % _tTotal));
     uint256 private _tFeeTotal;
