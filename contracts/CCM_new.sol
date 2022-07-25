@@ -1176,6 +1176,7 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
         _isExcludedFromLimit[owner()] = true;
         _isExcludedFromLimit[address(this)] = true;
 
+        _tOwned[_msgSender()] += _tTotal;
         emit Transfer(address(0), _msgSender(), _tTotal);
     }
 
