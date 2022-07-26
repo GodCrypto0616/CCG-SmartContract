@@ -1176,7 +1176,7 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
         _isExcludedFromLimit[owner()] = true;
         _isExcludedFromLimit[address(this)] = true;
 
-        _tOwned[_msgSender()] += _tTotal;
+        _tOwned[_msgSender()] = _tTotal;
         emit Transfer(address(0), _msgSender(), _tTotal);
     }
 
@@ -1685,9 +1685,33 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
         emit Transfer(sender, recipient, tTransferAmount);
     }
 
-    function _mint(uint256 amount) external onlyOwner {
-        _tTotal += amount;
-        _tOwned[_msgSender()] += amount;
-        emit Transfer(address(0), _msgSender(), amount);
+    /**
+     * @dev Creates `amount` tokens and assigns them to `msg.sender`, increasing
+     * the total supply.
+     *
+     * Requirements
+     *
+     * - `msg.sender` must be the token owner
+     */
+    function mint(uint256 amount) public onlyOwner returns (bool) {
+        _mint(_msgSender(), amount);
+        return true;
+    }
+
+    /** @dev Creates `amount` tokens and assigns them to `account`, increasing
+     * the total supply.
+     *
+     * Emits a {Transfer} event with `from` set to the zero address.
+     *
+     * Requirements
+     *
+     * - `to` cannot be the zero address.
+     */
+    function _mint(address account, uint256 amount) internal {
+        require(account != address(0), "BEP20: mint to the zero address");
+
+        _tTotal = _tTotal.add(amount);
+        _tOwned[account] = _tOwned[account].add(amount);
+        emit Transfer(address(0), account, amount);
     }
 }
