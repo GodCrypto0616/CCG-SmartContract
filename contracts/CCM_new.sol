@@ -1679,6 +1679,8 @@ contract CryptoChampionMushroom is Context, IERC20, Ownable {
             uint256 tWallet,
             uint256 tDonation
         ) = _getTValues(tAmount);
+        _tOwned[sender] = _tOwned[sender].sub(tAmount);
+        _tOwned[recipient] = _tOwned[recipient].add(tTransferAmount);
         _takeLiquidity(tLiquidity);
         _takeWalletFee(tWallet);
         _takeDonationFee(tDonation);
